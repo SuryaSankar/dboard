@@ -10,7 +10,15 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+requirements = [
+    'Click>=7.0',
+    "toolspy>=0.3.1",
+    "Flask>=1.0.2",
+    "SQLAlchemy>=1.3.1",
+    "Flask-SQLAlchemy>=2.3.2",
+    "Schemalite>=0.2.1",
+    "bleach"
+]
 
 setup_requirements = ['pytest-runner', ]
 

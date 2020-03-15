@@ -338,6 +338,7 @@ class SqlaQueryBuilder(object):
         if flask_app:
             @flask_app.teardown_appcontext
             def shutdown_session(response_or_exc):
+                print("about to remove session")
                 self.session.remove()
                 return response_or_exc
 

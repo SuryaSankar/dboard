@@ -16,6 +16,7 @@ requirements = [
     "Flask>=1.0.2",
     "SQLAlchemy>=1.3.1",
     "Flask-SQLAlchemy>=2.3.2",
+    "flask_sqlalchemy_session",
     "Schemalite>=0.2.1",
     "bleach",
     "pandas",

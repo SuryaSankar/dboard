@@ -3,11 +3,13 @@ import math
 import urllib.parse
 
 
-from flask import request
+from flask import request, Response
 
 from flask_sqlalchemy_booster.responses import as_json
 
-from toolspy import merge, null_safe_type_cast, subdict
+from io import StringIO
+
+from toolspy import merge, null_safe_type_cast, subdict, write_csv_file
 
 from .utils import (
     convert_sqla_collection_items_to_dicts,
@@ -85,6 +87,15 @@ def construct_meta_dict_from_query(q, query_modifiers):
     return meta
 
 
+def construct_list_of_dicts_from_query(
+        q, query_modifiers=None, allow_modification_via_requests=True):
+    query_modifiers = construct_query_modifiers(
+        query_modifiers,
+        allow_modification_via_requests=allow_modification_via_requests)
+    q = apply_modifiers_on_sqla_query(q, **query_modifiers)
+    return convert_sqla_collection_items_to_dicts(q.all())
+
+
 def construct_json_response_from_query(
         q, query_modifiers=None, allow_modification_via_requests=True):
 
@@ -107,10 +118,26 @@ def construct_json_response_from_query(
     )
 
 
+def convert_csv_text_to_csv_response(csvtext):
+    return Response(csvtext, mimetype="text/csv")
+
+
+def construct_csv_response_from_query(
+        q, query_modifiers=None, allow_modification_via_requests=True):
+    cols = get_queried_field_labels(q)
+    rows = construct_list_of_dicts_from_query(
+        q, query_modifiers=query_modifiers,
+        allow_modification_via_requests=allow_modification_via_requests)
+    strfile = StringIO()
+    write_csv_file(strfile, rows=rows, cols=cols)
+    csv_content = strfile.getvalue().strip("\r\n")
+    strfile.close()
+    return convert_csv_text_to_csv_response(csv_content)
+
+
 def convert_df_to_csv_response(df):
-    return "data:text/csv;charset=utf-8,{}".format(
-        urllib.parse.quote(df.to_csv(encoding='utf-8'))
-    )
+    return convert_csv_text_to_csv_response(
+        df.to_csv(encoding='utf-8'))
 
 
 def convert_dt_to_csv_response(dt, index_col=None):

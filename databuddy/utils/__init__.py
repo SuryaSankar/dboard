@@ -5,9 +5,16 @@ from .datetime_utils import *
 from .formatters import *
 from .function_utils import *
 from sqlalchemy import asc, desc, func
+import sqlalchemy
+from sqlalchemy.orm import class_mapper, query
 
 
 def get_queried_field_labels(q):
+    if len(q._entities) == 0 and isinstance(
+            q._entities[0], query._MapperEntity):
+        # If the query is like query(ModelName)
+        return q._entities[0].mapper.columns.keys()
+    # If the query is like query(Model1.col1, Model1.col2)
     return [e._label_name for e in q._entities]
 
 
@@ -16,7 +23,10 @@ def sqla_sort(sort_order):
 
 
 def convert_sqla_collection_item_to_dict(item):
-    return {f: getattr(item, f) for f in item._fields}
+    if hasattr(item, '_asdict'):
+        return item._asdict()
+    return {f: getattr(item, f) for f in class_mapper(
+        type(item)).columns.keys()}
 
 
 def convert_sqla_collection_items_to_dicts(collection):

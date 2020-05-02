@@ -2,6 +2,7 @@ import math
 
 import urllib.parse
 
+import json
 
 from flask import request, Response
 
@@ -150,3 +151,45 @@ def convert_dt_data_to_csv_response(dt_data, index_col=None):
     return convert_df_to_csv_response(
         df=convert_dt_data_to_df(dt_data, index_col=index_col)
     )
+
+def register_query_endpoints(app_or_bp, registration_dict):
+    """
+    registration_dict = {
+        "/daily-transactions": {
+            "query_constructor": some_query_func,
+            "filter_params_schema": SomeSchemaClass,
+            "default_query_modifiers": {}
+        }
+    }
+    """
+    def construct_get_func(
+            query_constructor, json_query_modifiers=None,
+            csv_query_modifiers=None,
+            filter_params_schema=None):
+        def _get_func():
+            filter_params = request.args.get('filter_params')
+            if filter_params:
+                filter_params = json.loads(filter_params)
+                print(filter_params)
+                filter_params = filter_params_schema().load(filter_params)
+            q = query_constructor(filter_params=filter_params)
+            response_format = request.args.get('format')
+            if response_format == 'csv':
+                return construct_csv_response_from_query(
+                    q, query_modifiers=csv_query_modifiers)
+            return construct_json_response_from_query(
+                q, query_modifiers=json_query_modifiers)
+        return _get_func
+
+    for url, data in registration_dict.items():
+        get_func = construct_get_func(
+            data["query_constructor"],
+            json_query_modifiers=data.get("json_query_modifiers"),
+            csv_query_modifiers=data.get("csv_query_modifiers"),
+            filter_params_schema=data.get("filter_params_schema")
+        )
+        app_or_bp.route(
+            url, methods=['GET'], endpoint=url.replace("-", "_")
+        )(get_func)
+
+    return app_or_bp

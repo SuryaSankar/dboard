@@ -43,7 +43,6 @@ def construct_query_modifiers(
         "sort": "asc",
         "group_by": None
     }
-    print("received query modifiers as ", query_modifiers)
     if query_modifiers is None:
         query_modifiers = {}
     query_modifiers = subdict(query_modifiers, QUERY_MODIFIERS)
@@ -56,7 +55,6 @@ def construct_query_modifiers(
         if k in query_modifiers:
             query_modifiers[k] = null_safe_type_cast(
                 int, query_modifiers.get(k))
-    print("final query_modifiers ", query_modifiers)
     return query_modifiers
 
 
@@ -152,13 +150,30 @@ def convert_dt_data_to_csv_response(dt_data, index_col=None):
         df=convert_dt_data_to_df(dt_data, index_col=index_col)
     )
 
+
+def render_query_response(
+        query_constructor, json_query_modifiers=None,
+        csv_query_modifiers=None, filter_params_schema=None):
+    filter_params = request.args.get('filter_params')
+    if filter_params:
+        filter_params = filter_params_schema().load(
+            json.loads(filter_params))
+    q = query_constructor(filter_params=filter_params)
+    response_format = request.args.get('format')
+    if response_format == 'csv':
+        return construct_csv_response_from_query(
+            q, query_modifiers=csv_query_modifiers)
+    return construct_json_response_from_query(
+        q, query_modifiers=json_query_modifiers)
+
+
 def register_query_endpoints(app_or_bp, registration_dict):
     """
     registration_dict = {
         "/daily-transactions": {
             "query_constructor": some_query_func,
             "filter_params_schema": SomeSchemaClass,
-            "default_query_modifiers": {}
+            "json_query_modifiers": {}
         }
     }
     """
@@ -167,18 +182,10 @@ def register_query_endpoints(app_or_bp, registration_dict):
             csv_query_modifiers=None,
             filter_params_schema=None):
         def _get_func():
-            filter_params = request.args.get('filter_params')
-            if filter_params:
-                filter_params = json.loads(filter_params)
-                print(filter_params)
-                filter_params = filter_params_schema().load(filter_params)
-            q = query_constructor(filter_params=filter_params)
-            response_format = request.args.get('format')
-            if response_format == 'csv':
-                return construct_csv_response_from_query(
-                    q, query_modifiers=csv_query_modifiers)
-            return construct_json_response_from_query(
-                q, query_modifiers=json_query_modifiers)
+            return render_query_response(
+                query_constructor, json_query_modifiers=json_query_modifiers,
+                csv_query_modifiers=csv_query_modifiers,
+                filter_params_schema=filter_params_schema)
         return _get_func
 
     for url, data in registration_dict.items():
@@ -189,7 +196,8 @@ def register_query_endpoints(app_or_bp, registration_dict):
             filter_params_schema=data.get("filter_params_schema")
         )
         app_or_bp.route(
-            url, methods=['GET'], endpoint=url.replace("-", "_")
+            url, methods=['GET'], endpoint=url.strip("/").replace(
+                "-", "_").replace("/", "_")
         )(get_func)
 
     return app_or_bp

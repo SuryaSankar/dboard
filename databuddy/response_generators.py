@@ -151,20 +151,36 @@ def convert_dt_data_to_csv_response(dt_data, index_col=None):
     )
 
 
-def render_query_response(
-        query_constructor, json_query_modifiers=None,
-        csv_query_modifiers=None, filter_params_schema=None):
-    filter_params = request.args.get('filter_params')
-    if filter_params:
+def fetch_filter_params(
+        filter_params_schema=None, filter_params_arg='filter_params', ):
+    filter_params = request.args.get(filter_params_arg)
+    if filter_params and filter_params_schema:
         filter_params = filter_params_schema().load(
             json.loads(filter_params))
-    q = query_constructor(filter_params=filter_params)
+    return filter_params
+
+def construct_response_from_query(
+        q, json_query_modifiers=None, csv_query_modifiers=None):
     response_format = request.args.get('format')
     if response_format == 'csv':
         return construct_csv_response_from_query(
             q, query_modifiers=csv_query_modifiers)
     return construct_json_response_from_query(
         q, query_modifiers=json_query_modifiers)
+
+
+def render_query_response(
+        query_constructor, query_engine, db_base,
+        json_query_modifiers=None,
+        csv_query_modifiers=None, filter_params_schema=None):
+    filter_params = fetch_filter_params(
+        filter_params_schema=filter_params_schema)
+    with query_engine.scoped_session() as session:
+        q = query_constructor(
+            session, query_engine, db_base, filter_params=filter_params)
+        return construct_response_from_query(
+            q, json_query_modifiers=json_query_modifiers,
+            csv_query_modifiers=csv_query_modifiers)
 
 
 def register_query_endpoints(app_or_bp, registration_dict):

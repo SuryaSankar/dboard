@@ -30,7 +30,7 @@ class SqlaQueryBuilder(object):
             self.session = scoped_session(self.sessionmaker)
 
     @contextmanager
-    def session_scope(self):
+    def scoped_session(self):
         """Provide a transactional scope around a series of operations."""
         session = self.sessionmaker()
         try:
@@ -64,6 +64,7 @@ class SqlaQueryBuilder(object):
     def construct_interval_query(
             self, interval_field_name,
             interval_field_label, interval_timestamp_format,
+            session=None,
             fields_to_query=None, filters=None):
         interval_field = func.date_format(
             self.local_tz_converted_date(
@@ -72,6 +73,8 @@ class SqlaQueryBuilder(object):
         fields_to_query = [
             interval_field.label(interval_field_label)
         ] + (fields_to_query or [])
+        if not session:
+            session = self.session
         q = self.session.query(*fields_to_query)
         if filters:
             q = q.filter(*filters)
@@ -95,12 +98,14 @@ class SqlaQueryBuilder(object):
     def construct_interval_df(
             self, interval_field_name,
             interval_field_label, interval_timestamp_format,
+            session=None,
             fields_to_query=None, filters=None):
         return self.convert_interval_query_to_df(
             self.construct_interval_query(
                 interval_field_name,
                 interval_field_label,
                 interval_timestamp_format,
+                session=session,
                 fields_to_query=fields_to_query, filters=filters
             ).subquery(),
             interval_field_label,
@@ -108,12 +113,14 @@ class SqlaQueryBuilder(object):
         )
 
     def construct_daily_query(
-            self, day_field_name, fields_to_query=None,
+            self, day_field_name, session=None,
+            fields_to_query=None,
             filters=None, day_field_label='day'):
         return self.construct_interval_query(
             interval_field_name=day_field_name,
             interval_field_label=day_field_label,
             interval_timestamp_format='%Y-%m-%d',
+            session=session,
             fields_to_query=fields_to_query, filters=filters
         )
 
@@ -125,21 +132,24 @@ class SqlaQueryBuilder(object):
 
     def construct_daily_df(
             self, day_field_name, fields_to_query=None,
+            session=None,
             filters=None, day_field_label='day'):
         return self.construct_interval_df(
             interval_field_name=day_field_name,
             interval_field_label=day_field_label,
             interval_timestamp_format='%Y-%m-%d',
+            session=session,
             fields_to_query=fields_to_query, filters=filters
         )
 
     def construct_monthly_query(
             self, month_field_name, fields_to_query=None,
-            filters=None, month_field_label='month'):
+            session=None, filters=None, month_field_label='month'):
         return self.construct_interval_query(
             interval_field_name=month_field_name,
             interval_field_label=month_field_label,
             interval_timestamp_format='%Y-%m',
+            session=session,
             fields_to_query=fields_to_query, filters=filters
         )
 
@@ -151,10 +161,12 @@ class SqlaQueryBuilder(object):
 
     def construct_monthly_df(
             self, month_field_name, fields_to_query=None,
+            session=None,
             filters=None, month_field_label='month'):
         return self.convert_monthly_query_to_df(
             self.construct_monthly_query(
                 month_field_name,
+                session=session,
                 fields_to_query=fields_to_query,
                 filters=filters,
                 month_field_label=month_field_label

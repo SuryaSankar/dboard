@@ -30,14 +30,16 @@ class SqlaQueryBuilder(object):
             self.session = scoped_session(self.sessionmaker)
 
     @contextmanager
-    def scoped_session(self):
+    def scoped_session(self, commit=False):
         """Provide a transactional scope around a series of operations."""
         session = self.sessionmaker()
         try:
             yield session
-            session.commit()
+            if commit:
+                session.commit()
         except:
-            session.rollback()
+            if commit:
+                session.rollback()
             raise
         finally:
             session.close()

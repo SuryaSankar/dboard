@@ -4,7 +4,7 @@ import urllib.parse
 
 import json
 
-from flask import request, Response
+from flask import request, Response, abort
 
 from flask_sqlalchemy_booster.responses import as_json
 
@@ -175,12 +175,18 @@ def render_query_response(
         csv_query_modifiers=None, filter_params_schema=None):
     filter_params = fetch_filter_params(
         filter_params_schema=filter_params_schema)
-    with query_engine.scoped_session() as session:
+    session = query_engine.session()
+    try:
         q = query_constructor(
             session, query_engine, db_base, filter_params=filter_params)
-        return construct_response_from_query(
+        response = construct_response_from_query(
             q, json_query_modifiers=json_query_modifiers,
             csv_query_modifiers=csv_query_modifiers)
+    except:
+        abort(400)
+    finally:
+        session.close()
+    return response
 
 
 def register_query_endpoints(app_or_bp, registration_dict):

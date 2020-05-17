@@ -147,14 +147,16 @@ def construct_csv_response_from_query(
 
 
 def fetch_filter_params(
-        filter_params_schema=None, filter_params_arg='filter_params'):
-    print("filter_params_arg is ", filter_params_arg)
+        filter_params_schema=None, filter_params_arg='filter_params',
+        convert_empty_string_to_none=True):
     filter_params = request.args.get(filter_params_arg)
-    print("raw filter_params is ", filter_params)
     if filter_params and filter_params_schema:
+        filter_params = json.loads(filter_params)
+        for k, v in filter_params.items():
+            if v == "":
+                filter_params[k] = None
         filter_params = filter_params_schema().load(
-            json.loads(filter_params))
-    print("final filter_params ", filter_params)
+            filter_params)
     return filter_params
 
 def construct_response_from_query(

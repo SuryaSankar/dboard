@@ -22,7 +22,7 @@ from .utils.dash_utils import (
 
 
 QUERY_MODIFIERS = [
-    'page', 'per_page', 'limit', 'offset', 'order_by', 'sort', 'group_by']
+    'page', 'per_page', 'limit', 'offset', 'order_by', 'sort']
 
 
 def fetch_query_modifiers_from_request():
@@ -41,7 +41,6 @@ def construct_query_modifiers(
         "offset": None,
         "order_by": None,
         "sort": "asc",
-        "group_by": None
     }
     if query_modifiers is None:
         query_modifiers = {}
@@ -60,9 +59,7 @@ def construct_query_modifiers(
 
 def apply_modifiers_on_sqla_query(
         q, page=None, per_page=20, limit=None, offset=None,
-        group_by=None, order_by=None, sort='asc'):
-    if group_by is not None:
-        q = q.group_by(group_by)
+        order_by=None, sort='asc'):
     if order_by is not None:
         q = q.order_by(sqla_sort(sort)(order_by))
     if page:
@@ -120,6 +117,21 @@ def construct_json_response_from_query(
 def convert_csv_text_to_csv_response(csvtext):
     return Response(csvtext, mimetype="text/csv")
 
+def convert_df_to_csv_response(df):
+    return convert_csv_text_to_csv_response(
+        df.to_csv(encoding='utf-8'))
+
+
+def convert_dt_to_csv_response(dt, index_col=None):
+    return convert_df_to_csv_response(
+        df=convert_dt_to_df(dt, index_col=index_col),
+    )
+
+def convert_dt_data_to_csv_response(dt_data, index_col=None):
+    return convert_df_to_csv_response(
+        df=convert_dt_data_to_df(dt_data, index_col=index_col)
+    )
+
 
 def construct_csv_response_from_query(
         q, query_modifiers=None, allow_modification_via_requests=True):
@@ -134,29 +146,15 @@ def construct_csv_response_from_query(
     return convert_csv_text_to_csv_response(csv_content)
 
 
-def convert_df_to_csv_response(df):
-    return convert_csv_text_to_csv_response(
-        df.to_csv(encoding='utf-8'))
-
-
-def convert_dt_to_csv_response(dt, index_col=None):
-    return convert_df_to_csv_response(
-        df=convert_dt_to_df(dt, index_col=index_col),
-    )
-
-
-def convert_dt_data_to_csv_response(dt_data, index_col=None):
-    return convert_df_to_csv_response(
-        df=convert_dt_data_to_df(dt_data, index_col=index_col)
-    )
-
-
 def fetch_filter_params(
-        filter_params_schema=None, filter_params_arg='filter_params', ):
+        filter_params_schema=None, filter_params_arg='filter_params'):
+    print("filter_params_arg is ", filter_params_arg)
     filter_params = request.args.get(filter_params_arg)
+    print("raw filter_params is ", filter_params)
     if filter_params and filter_params_schema:
         filter_params = filter_params_schema().load(
             json.loads(filter_params))
+    print("final filter_params ", filter_params)
     return filter_params
 
 def construct_response_from_query(

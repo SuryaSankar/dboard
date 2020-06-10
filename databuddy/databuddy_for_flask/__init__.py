@@ -1,6 +1,7 @@
 from flask import Blueprint, request, url_for, render_template
 import json
 from toolspy import set_query_params
+from .template_filters import register_template_filters
 
 
 def create_blueprint(
@@ -66,17 +67,20 @@ class DatabuddyForFlask(object):
 
     def __init__(
             self, app, blueprint_name="databuddy", 
-            blueprint_url_prefix="/databuddy"):
+            blueprint_url_prefix="/databuddy",
+            nav_menu_items=None):
         self.pages_bp = None
         if app is not None:
             self.init_app(
                 app, blueprint_name=blueprint_name,
-                blueprint_url_prefix=blueprint_url_prefix)
+                blueprint_url_prefix=blueprint_url_prefix,
+                nav_menu_items=nav_menu_items)
 
 
     def init_app(
             self, app, blueprint_name="databuddy", 
-            blueprint_url_prefix="/databuddy"):
+            blueprint_url_prefix="/databuddy",
+            nav_menu_items=None):
         '''Initalizes the application with the extension.
         :param app: The Flask application object.
         '''
@@ -84,3 +88,10 @@ class DatabuddyForFlask(object):
             app, blueprint_name=blueprint_name,
             blueprint_url_prefix=blueprint_url_prefix)
         app.register_blueprint(self.pages_bp)
+        register_template_filters(app)
+
+        @app.context_processor
+        def inject_nav_menu_items():
+            return dict(
+                nav_menu_items=nav_menu_items
+            )

@@ -8,3 +8,4 @@ from .databuddy import *
 from .response_generators import *
 from .utils import *
 from .sqlalchemy_wrappers import *
+from .databuddy_for_flask import DatabuddyForFlask, render_table_layout

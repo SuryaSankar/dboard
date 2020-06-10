@@ -1,0 +1,11 @@
+{% macro tabulator(table_id, api_url) %}
+    var table = new Tabulator(
+        "#{{table_id}}", {
+            ajaxURL: "{{api_url}}",
+            autoColumns: true,
+            pagination: "remote",
+            paginationDataReceived: {
+                "last_page": "total_pages"
+            }
+        });
+{% endmacro %}

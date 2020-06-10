@@ -160,11 +160,16 @@ def fetch_filter_params(
     return filter_params
 
 def construct_response_from_query(
-        q, json_query_modifiers=None, csv_query_modifiers=None):
-    response_format = request.args.get('format')
+        q, json_query_modifiers=None, csv_query_modifiers=None,
+        response_format=None):
+    if response_format is None:
+        response_format = request.args.get('format')
     if response_format == 'csv':
         return construct_csv_response_from_query(
             q, query_modifiers=csv_query_modifiers)
+    elif response_format == 'dict':
+        return construct_list_of_dicts_from_query(
+            q, query_modifiers=json_query_modifiers)
     return construct_json_response_from_query(
         q, query_modifiers=json_query_modifiers)
 
@@ -172,16 +177,20 @@ def construct_response_from_query(
 def render_query_response(
         query_constructor, query_engine, db_base,
         json_query_modifiers=None,
-        csv_query_modifiers=None, filter_params_schema=None):
-    filter_params = fetch_filter_params(
-        filter_params_schema=filter_params_schema)
+        csv_query_modifiers=None, filter_params_schema=None,
+        filter_params=None,
+        response_format=None):
+    if filter_params is None:
+        filter_params = fetch_filter_params(
+            filter_params_schema=filter_params_schema)
     session = query_engine.session()
     try:
         q = query_constructor(
             session, query_engine, db_base, filter_params=filter_params)
         response = construct_response_from_query(
             q, json_query_modifiers=json_query_modifiers,
-            csv_query_modifiers=csv_query_modifiers)
+            csv_query_modifiers=csv_query_modifiers,
+            response_format=response_format)
     except:
         abort(400)
     finally:

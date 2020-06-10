@@ -1,0 +1,96 @@
+{% extends "databuddy/layout.html" %}
+
+{% if table_id is not defined %}
+    {% if heading is defined %}
+        {% set table_id = heading | replace(" ", "-") | lower %}
+    {% else %}
+        {% set table_id = "primary-table" %}
+    {% endif %}
+{% endif %}
+
+{% if table_filters_form_id is not defined %}
+    {% set table_filters_form_id = "filters" %}
+{% endif %}
+
+{% block page_content %}
+    {% if filters is defined %}
+        <div class="row pb-2">
+            {{layout_components.render_form(filters, table_filters_form_id)}}
+        </div>
+    {% endif %}
+    <div class="row pb-2 justify-content-end">
+        <div class="col-1">
+            <a 
+                id="{{table_id}}-full-csv"
+                href="{{api_url | set_query_params({'format' :'csv'}) | safe}}"
+                download="{{table_id}}_{{requested_db}}_{{curr_dt | format_datetime('%Y_%m_%d_%H_%M_%S')}}.csv"
+                target="_blank"
+                class="btn btn-sm btn-secondary"
+                >
+                    Download CSV
+            </a>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="true">Table</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="charts-tab" data-toggle="tab" href="#charts" role="tab" aria-controls="charts" aria-selected="false">Charts</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="table" role="tabpanel" aria-labelledby="table-tab">
+            {% block table_tab %}
+            <div class="row">
+                <div id="{{table_id}}"></div>
+            </div>
+            {% endblock %}
+        </div>
+        <div class="tab-pane" id="charts" role="tabpanel" aria-labelledby="charts-tab">
+            {% block charts_tab %}
+            <div class="row">
+                <div id="{{table_id}}-graph"
+                    style="width:100%; height:300px;"></div>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block page_js_in_footer %}
+<script>
+    $(function(){
+        initializeTable("{{table_id}}", "{{api_url | safe}}");
+        
+    });
+</script>
+
+{% block chart_js %}
+    <script>
+    $(function(){
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+              console.log(e.target); // newly activated tab
+              if(e.target.id=="charts-tab"){
+                console.log("activating graph");
+                g2 = new Dygraph(
+                    document.getElementById("{{table_id}}-graph"),
+                    "{{api_url | set_query_params({'format' :'csv'}) | safe}}",
+                    {}
+                );
+
+              }
+            }); 
+    });
+    </script>
+
+{% endblock %}
+
+<script type="module">
+    import {registerPageReloadingFormHandler} from '/static/js/form_utils.js';
+    registerPageReloadingFormHandler("{{table_filters_form_id}}");
+</script>
+
+{% endblock %}

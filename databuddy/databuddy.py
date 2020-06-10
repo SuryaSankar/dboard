@@ -13,7 +13,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from toolspy.datetime_tools import n_days_ago
 
-from .utils.datetime_utils import tz_converted_date
+from .utils.datetime_utils import tz_converted_date, tz_convert
 
 
 class SqlaQueryBuilder(object):
@@ -50,6 +50,10 @@ class SqlaQueryBuilder(object):
 
     def local_tz_converted_date(self, datetime_col):
         return tz_converted_date(
+            datetime_col, self.timedelta_mins_from_utc)
+
+    def local_tz_convert(self, datetime_col):
+        return tz_convert(
             datetime_col, self.timedelta_mins_from_utc)
 
     def local_n_days_ago(self, n):

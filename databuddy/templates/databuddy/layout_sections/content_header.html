@@ -1,0 +1,20 @@
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">{{heading}} - {{requested_db | capitalize}}</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        {% if db_name_to_switch %}
+        <a href="{{ request.url | set_query_params({'target_db': db_name_to_switch})}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Switch to {{db_name_to_switch}}</a>
+        {% endif %}
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active">{{heading}}</li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->

@@ -1,0 +1,60 @@
+{% import "databuddy/macros/layout_components.html" as layout_components %}
+{% import "databuddy/macros/widgets.html" as widgets %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DataViewer</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "databuddy/layout_sections/head_css.html" %}
+  {% include "databuddy/layout_sections/head_js.html" %}
+  {% block page_css_in_head %}{% endblock %}
+  {% block page_js_in_head %}{% endblock %}
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  {% include "databuddy/layout_sections/topbar.html" %}
+
+  {% include "databuddy/layout_sections/left_navbar.html" %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    {% include "databuddy/layout_sections/content_header.html" %}
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        {% block page_content %}
+        {% endblock %}
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 3.0.4
+    </div>
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+{% include "databuddy/layout_sections/foot_css.html" %}
+{% include "databuddy/layout_sections/foot_js.html" %}
+
+{% block page_css_in_footer %}{% endblock %}
+{% block page_js_in_footer %}{% endblock %}
+</body>
+</html>

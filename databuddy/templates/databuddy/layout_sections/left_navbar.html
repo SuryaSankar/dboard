@@ -1,0 +1,18 @@
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+  <a href="/" class="brand-link">
+    <img src="/static/node_modules/admin-lte/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+         style="opacity: .8">
+    <span class="brand-text font-weight-light">DataViewer</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar Menu -->
+    {{ layout_components.nav_menu(nav_menu_items)}}
+    {# nav_menu_items is a variable injected into jinja2 context in app_factory#}
+    <!-- /.sidebar-menu -->
+  </div>
+    <!-- /.sidebar -->
+</aside>

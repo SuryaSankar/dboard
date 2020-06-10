@@ -2,6 +2,9 @@ from flask import Blueprint, request, url_for, render_template
 import json
 from toolspy import set_query_params
 from .template_filters import register_template_filters
+from .data_sources import (
+    prepare_data_sources, construct_sqla_db_uri,
+    sqla_db_info, sqla_query_builder, sqla_base)
 
 
 def create_blueprint(
@@ -89,6 +92,7 @@ class DatabuddyForFlask(object):
             blueprint_url_prefix=blueprint_url_prefix)
         app.register_blueprint(self.pages_bp)
         register_template_filters(app)
+        prepare_data_sources(app.config["DATA_SOURCES"], app)
 
         @app.context_processor
         def inject_nav_menu_items():

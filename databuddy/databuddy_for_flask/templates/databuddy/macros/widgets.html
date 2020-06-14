@@ -9,3 +9,73 @@
             }
         });
 {% endmacro %}
+
+
+{% macro pagination_bar(total_pages, curr_page_first_item_index, curr_page_last_item_index, total_items) %}
+  {% if request.args['page'] is not none %}
+      <nav>
+        <ul class="pagination hidden-xs">
+          
+            {% if request.args['page']|int > 1 %}
+            <li>
+              <a href="{{ request.url | set_query_params({'page': request.args['page']|int - 1})}}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="disabled">
+              <span aria-hidden="true">&laquo;</span>
+            </li>
+            {% endif %}
+            {% for page in range(1, total_pages + 1) %}
+            <li
+                {% if request.args['page']|int == page %}
+                    class="active"
+                {% endif %}
+            >
+                <a href="{{ request.url | set_query_params({'page': page})}}">{{page}}</a>
+            </li>
+          {% endfor %}
+          {% if request.args['page']|int < total_pages %}
+          <li>
+            <a href="{{ request.url | set_query_params({'page': request.args['page']|int + 1})}}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          {% else %}
+            <li class="disabled">
+              <span aria-hidden="true">&raquo;</span>
+            </li>
+          {% endif %}
+        </ul>
+        <div class="im-device-pagination visible-xs">
+          <div>
+            <div class="im-left-arw">
+              <a class="btn btn-default" href="{{ request.url | set_query_params({'page': request.args['page']|int - 1})}}" aria-label="Previous" onClick={this.toPreviousPage}>
+                  <span aria-hidden="true">&laquo;</span>
+              </a>
+            </div>
+            <div class="im-page-num">
+              <ul>
+              {% for page in range(1, total_pages + 1) %}
+                <li
+                    {% if request.args['page']|int == page %}
+                        class="active"
+                    {% endif %}
+                >
+                    <a href="{{ request.url | set_query_params({'page': page})}}">{{page}}</a>
+                </li>
+              {% endfor %}
+              </ul>
+            </div>
+            <div class="im-right-arw">
+              <a class="btn btn-default" href="{{ request.url | set_query_params({'page': request.args['page']|int + 1})}}" aria-label="Next" onClick={this.toNextPage}>
+                  <span aria-hidden="true">&raquo;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <span>Showing {{curr_page_first_item_index}} - {{curr_page_last_item_index}} items out of {{total_items}} items</span>
+  {% endif %}
+{% endmacro %}

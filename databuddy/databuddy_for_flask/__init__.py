@@ -17,25 +17,9 @@ def create_blueprint(
         template_folder="templates")
     return bp
 
-def transformed_dict(
-        d, keys_to_retain=None, keys_to_rename=None,
-        skip_none_vals=True):
-    result = {}
-    for k, v in d.items():
-        if v is None and skip_none_vals:
-            continue
-        if keys_to_retain is None or k in keys_to_retain:
-            if keys_to_rename and k in keys_to_rename:
-                key = keys_to_rename.get(k)
-            else:
-                key = k
-            result[key] = v
-    print("transformed_dict is ", result)
-    return result
-
 
 def render_table_layout(
-        api_endpoint,
+        api_url,
         table_heading,
         table_filters,
         table_filters_form_id="filters",
@@ -51,17 +35,11 @@ def render_table_layout(
     return render_template(
         template_path,
         heading=table_heading,
-        api_url=set_query_params(
-            url_for(api_endpoint),
-            transformed_dict(
-                request.args, 
-                keys_to_retain=['target_db', table_filters_form_id],
-                keys_to_rename={table_filters_form_id: "filter_params"}
-            )
-        ),
+        api_url=api_url,
         filters=table_filters,
         **kwargs
     )
+
 
 class DatabuddyForFlask(object):
     """

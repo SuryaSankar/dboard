@@ -31,7 +31,19 @@
             </a>
         </div>
     </div>
-    <ul class="nav nav-tabs">
+    {% block table_tab %}
+    <div class="row">
+        <div id="{{table_id}}"></div>
+    </div>
+    {% endblock %}
+    {% block charts_tab %}
+    <div class="row">
+        <div id="{{table_id}}-graph"
+            style="width:100%; height:300px;"></div>
+        </div>
+    </div>
+    {% endblock %}
+    {#<ul class="nav nav-tabs">
       <li class="nav-item" role="presentation">
         <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="true">Table</a>
       </li>
@@ -56,17 +68,20 @@
             </div>
             {% endblock %}
         </div>
-    </div>
+    </div>#}
     
 {% endblock %}
 
 {% block page_js_in_footer %}
+
+{% block table_initialization_js %}
 <script>
     $(function(){
         initializeTable("{{table_id}}", "{{api_url | safe}}");
         
     });
 </script>
+{% endblock %}
 
 {% block chart_js %}
     <script>

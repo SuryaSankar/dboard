@@ -31,14 +31,22 @@
             </a>
         </div>
     </div>
-    {% block charts %}
-    {% endblock %}
-    {% block table %}
-        <h3>Table</h3>
-        <div class="row">
-            <div id="{{table_id}}"></div>
-        </div>
-    {% endblock %}
+    <div id="table-and-charts-loader" class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div id="table-and-charts" style="display:none;">
+        {% block charts %}
+        {% endblock %}
+        {% block table %}
+            <h3>Table</h3>
+            <div class="row">
+                <div id="{{table_id}}"></div>
+            </div>
+        {% endblock %}
+    </div>
+    <div id="table-and-charts-failure" style="display:none;">
+        <p>Failed to load the data. Please reload</p>
+    </div>
 
 
     
@@ -50,5 +58,16 @@
     import {registerPageReloadingFormHandler} from '/static/js/form_utils.js';
     registerPageReloadingFormHandler("{{table_filters_form_id}}");
 </script>
+
+{% block layout_setup_js %}
+    <script type="module">
+        import { setupStandardLayout } from '/static/js/layouts.js';
+
+        setupStandardLayout("{{api_url}}", "{{table_id}}")
+            .then(response => {
+
+            });
+    </script>
+{% endblock %}
 
 {% endblock %}

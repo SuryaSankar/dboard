@@ -73,13 +73,13 @@ def apply_modifiers_on_sqla_query(
 def construct_meta_dict_from_query(q, query_modifiers):
     meta = {
         "total_items": q.count(),
+        "columns": get_queried_field_labels(q)
     }
     if query_modifiers.get("page"):
         meta["page"] = query_modifiers["page"]
         meta["per_page"] = query_modifiers.get("per_page")
         meta["total_pages"] = math.ceil(
             meta["total_items"] / meta["per_page"])
-        meta["columns"] = get_queried_field_labels(q)
     return meta
 
 

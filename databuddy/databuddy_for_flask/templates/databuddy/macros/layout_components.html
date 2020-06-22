@@ -65,8 +65,26 @@
     </nav>
 {% endmacro %}
 
+{% macro render_select_tag(field) %}
+  <select
+    name="{{field.name}}"
+    id="{{field.name}}"
+  >
+    <option value=""></option>
+    {% for option in field.options %}
+      <option 
+        value="{{option.value}}"
+        {% if field.value is defined and option.value==field.value %}
+        selected
+        {% endif %}
+      >
+        {{option.label}}
+      </option>
+    {% endfor %}
+  </select>
+{% endmacro %}
+
 {% macro render_input_tag(field) %}
-  <label for="{{field.name}}">{{field.label or field.name}}</label>
   <input 
     type="{{field.type}}" 
     id="{{field.name}}" 
@@ -78,6 +96,15 @@
   </input>
 {% endmacro %}
 
+{% macro render_field(field) %}
+  <label for="{{field.name}}">{{field.label or field.name}}</label>
+  {% if field.type == "select" %}
+    {{render_select_tag(field)}}
+  {% else %}
+    {{render_input_tag(field)}}
+  {% endif %}
+{% endmacro %}
+
 {% macro render_form(fields, form_id, method) %}
     <form 
       name="{{form_id}}" 
@@ -87,7 +114,7 @@
       {% endif %}
     >
         {% for field in fields %}
-          {{render_input_tag(field)}}
+          {{render_field(field)}}
         {% endfor %}
         <button id="{{form_id}}-submit" class="btn btn-sm btn-info">
         Submit

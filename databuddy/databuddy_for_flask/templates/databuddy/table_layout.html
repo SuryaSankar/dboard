@@ -59,15 +59,15 @@
 {% block page_js_in_footer %}
 
 <script type="module">
-    import {registerPageReloadingFormHandler} from '/static/js/form_utils.js';
+    import {registerPageReloadingFormHandler} from '/static/node_modules/databuddy-client/dist/databuddy-client.esm.js';
     registerPageReloadingFormHandler("{{table_filters_form_id}}");
 </script>
 
 {% block layout_setup_js %}
     <script type="module">
-        import { setupStandardLayout } from '/static/js/layouts.js';
+        import { setupStandardLayout } from '/static/node_modules/databuddy-client/dist/databuddy-client.esm.js';
 
-        setupStandardLayout("{{api_url}}", "{{table_id}}")
+        setupStandardLayout("{{api_url | safe}}", "{{table_id}}")
             .then(response => {
 
             });

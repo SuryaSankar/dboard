@@ -39,3 +39,4 @@ def groupby_result_to_pd_series(result):
 
 def null_safe_sum(col):
     return func.sum(func.ifnull(col, 0))
+

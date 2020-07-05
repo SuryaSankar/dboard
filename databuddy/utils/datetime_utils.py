@@ -29,3 +29,11 @@ def next_month_start(dt):
 
 def this_month_start(dt):
     return datetime(dt.year, dt.month, 1, 0, 0)
+
+
+def month_format(datetime_col):
+    return func.date_format(datetime_col, "%Y-%m")
+
+def date_format(datetime_col):
+    return func.date_format(datetime_col, "%Y-%m-%d")
+

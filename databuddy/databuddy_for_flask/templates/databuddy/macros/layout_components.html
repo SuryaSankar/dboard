@@ -84,6 +84,29 @@
   </select>
 {% endmacro %}
 
+{% macro render_bool_select_tag(field) %}
+  <select
+    name="{{field.name}}"
+    id="{{field.name}}"
+  >
+    <option value=""></option>
+    <option value="true"
+    {% if field.value is defined and field.value=="true"%}
+    selected
+    {% endif %}
+    >
+      Yes
+    </option>
+    <option value="false"
+    {% if field.value is defined and field.value=="false"%}
+    selected
+    {% endif %}
+    >
+      No
+    </option>
+  </select>
+{% endmacro %}
+
 
 {% macro render_input_tag(field) %}
   <input 
@@ -101,6 +124,8 @@
   <label for="{{field.name}}">{{field.label or field.name}}</label>
   {% if field.type == "select" %}
     {{render_select_tag(field)}}
+  {% elif field.type == "bool-select" %}
+    {{render_bool_select_tag(field)}}
   {% else %}
     {{render_input_tag(field)}}
   {% endif %}

@@ -19,6 +19,7 @@ from .utils import (
 from .utils.dash_utils import (
     convert_dt_data_to_df,
     convert_dt_to_df)
+import traceback
 
 
 QUERY_MODIFIERS = [
@@ -191,8 +192,9 @@ def render_query_response(
             q, json_query_modifiers=json_query_modifiers,
             csv_query_modifiers=csv_query_modifiers,
             response_format=response_format)
-    except:
-        abort(400)
+    except Exception as e:
+        session.rollback()
+        raise e
     finally:
         session.close()
     return response
@@ -232,3 +234,17 @@ def register_query_endpoints(app_or_bp, registration_dict):
         )(get_func)
 
     return app_or_bp
+
+
+def convert_error_to_json_response(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        "status": "failure",
+        "error": {
+            "code": e.code,
+            "name": e.name,
+            "description": e.description
+        }
+    })
+    response.content_type = "application/json"
+    return response

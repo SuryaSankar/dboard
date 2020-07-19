@@ -22,6 +22,22 @@ from .utils.dash_utils import (
 import traceback
 
 
+def convert_df_to_csv_response(df):
+    return convert_csv_text_to_csv_response(
+        df.to_csv(encoding='utf-8'))
+
+
+def convert_dt_to_csv_response(dt, index_col=None):
+    return convert_df_to_csv_response(
+        df=convert_dt_to_df(dt, index_col=index_col),
+    )
+
+def convert_dt_data_to_csv_response(dt_data, index_col=None):
+    return convert_df_to_csv_response(
+        df=convert_dt_data_to_df(dt_data, index_col=index_col)
+    )
+
+
 QUERY_MODIFIERS = [
     'page', 'per_page', 'limit', 'offset', 'order_by', 'sort']
 
@@ -118,21 +134,6 @@ def construct_json_response_from_query(
 def convert_csv_text_to_csv_response(csvtext):
     return Response(csvtext, mimetype="text/csv")
 
-def convert_df_to_csv_response(df):
-    return convert_csv_text_to_csv_response(
-        df.to_csv(encoding='utf-8'))
-
-
-def convert_dt_to_csv_response(dt, index_col=None):
-    return convert_df_to_csv_response(
-        df=convert_dt_to_df(dt, index_col=index_col),
-    )
-
-def convert_dt_data_to_csv_response(dt_data, index_col=None):
-    return convert_df_to_csv_response(
-        df=convert_dt_data_to_df(dt_data, index_col=index_col)
-    )
-
 
 def construct_csv_response_from_query(
         q, query_modifiers=None, allow_modification_via_requests=True):
@@ -199,6 +200,19 @@ def render_query_response(
         session.close()
     return response
 
+def convert_error_to_json_response(e):
+    response = e.get_response()
+    response.data = json.dumps({
+        "status": "failure",
+        "error": {
+            "code": e.code,
+            "name": e.name,
+            "description": e.description
+        }
+    })
+    response.content_type = "application/json"
+    return response
+
 
 def register_query_endpoints(app_or_bp, registration_dict):
     """
@@ -234,17 +248,3 @@ def register_query_endpoints(app_or_bp, registration_dict):
         )(get_func)
 
     return app_or_bp
-
-
-def convert_error_to_json_response(e):
-    response = e.get_response()
-    response.data = json.dumps({
-        "status": "failure",
-        "error": {
-            "code": e.code,
-            "name": e.name,
-            "description": e.description
-        }
-    })
-    response.content_type = "application/json"
-    return response

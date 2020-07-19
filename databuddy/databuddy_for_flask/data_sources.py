@@ -1,5 +1,5 @@
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from ..databuddy import SqlaQueryBuilder
 from flask import current_app
 
@@ -13,9 +13,13 @@ def prepare_data_sources(data_sources, app):
     for db_name, db_dict in data_sources["sqla_compatible_dbs"].items():
         db_dict["sqla_db_uri"] = construct_sqla_db_uri(db_dict)
         db_dict["engine"] = create_engine(db_dict["sqla_db_uri"])
-        if db_dict.get("automap_orm"):
+        if db_dict.get("automap_tables"):
+            db_dict["metadata"] = MetaData()
+            db_dict["metadata"].reflect(db_dict["engine"])
+        elif db_dict.get("automap_orm"):
             db_dict["base"] = automap_base()
             db_dict["base"].prepare(db_dict["engine"], reflect=True)
+
         db_dict["query_builder"] = SqlaQueryBuilder(
             db_dict["engine"],
             flask_app=app,

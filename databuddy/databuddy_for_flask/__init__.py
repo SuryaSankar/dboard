@@ -9,7 +9,7 @@ from .data_sources import (
 
 def create_blueprint(
         app,
-        blueprint_name="databuddy", 
+        blueprint_name="databuddy",
         blueprint_url_prefix="/databuddy"):
     bp = Blueprint(
         blueprint_name, __name__,
@@ -47,21 +47,21 @@ class DatabuddyForFlask(object):
     """
 
     def __init__(
-            self, app, blueprint_name="databuddy", 
+            self, app, blueprint_name="databuddy",
             blueprint_url_prefix="/databuddy",
-            nav_menu_items=None):
+            nav_menu_items=None, engine_kwargs=None):
         self.pages_bp = None
         if app is not None:
             self.init_app(
                 app, blueprint_name=blueprint_name,
                 blueprint_url_prefix=blueprint_url_prefix,
-                nav_menu_items=nav_menu_items)
-
+                nav_menu_items=nav_menu_items,
+                engine_kwargs=engine_kwargs)
 
     def init_app(
-            self, app, blueprint_name="databuddy", 
+            self, app, blueprint_name="databuddy",
             blueprint_url_prefix="/databuddy",
-            nav_menu_items=None):
+            nav_menu_items=None, engine_kwargs=None):
         '''Initalizes the application with the extension.
         :param app: The Flask application object.
         '''
@@ -70,7 +70,8 @@ class DatabuddyForFlask(object):
             blueprint_url_prefix=blueprint_url_prefix)
         app.register_blueprint(self.pages_bp)
         register_template_filters(app)
-        prepare_data_sources(app.config["DATA_SOURCES"], app)
+        prepare_data_sources(
+            app.config["DATA_SOURCES"], app, engine_kwargs=engine_kwargs)
 
         @app.context_processor
         def inject_nav_menu_items():

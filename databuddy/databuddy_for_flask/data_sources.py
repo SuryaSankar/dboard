@@ -2,6 +2,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy import create_engine, MetaData
 from ..databuddy import SqlaQueryBuilder
 from flask import current_app
+from toolspy import merge, fetch_nested_key_from_dict
 
 
 def construct_sqla_db_uri(db_dict):
@@ -9,10 +10,15 @@ def construct_sqla_db_uri(db_dict):
         **db_dict)
 
 
-def prepare_data_sources(data_sources, app):
+def prepare_data_sources(data_sources, app, engine_kwargs=None):
     for db_name, db_dict in data_sources["sqla_compatible_dbs"].items():
+        engine_kwargs_for_db = merge(
+            fetch_nested_key_from_dict(engine_kwargs, '*') or {},
+            fetch_nested_key_from_dict(engine_kwargs, db_name) or {}
+        )
         db_dict["sqla_db_uri"] = construct_sqla_db_uri(db_dict)
-        db_dict["engine"] = create_engine(db_dict["sqla_db_uri"])
+        db_dict["engine"] = create_engine(
+            db_dict["sqla_db_uri"], **engine_kwargs_for_db)
         if db_dict.get("automap_tables"):
             db_dict["metadata"] = MetaData()
             db_dict["metadata"].reflect(db_dict["engine"])

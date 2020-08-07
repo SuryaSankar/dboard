@@ -22,7 +22,6 @@ requirements = [
     "pandas",
     "numpy",
     "flask_sqlalchemy_booster",
-    "dash",
     "mysqlclient"
 ]
 
@@ -62,6 +61,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/suryasankar/databuddy',
-    version='0.1.10',
+    version='0.1.11',
     zip_safe=False,
 )

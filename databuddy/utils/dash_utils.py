@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from toolspy import merge
+from flask import Response
 
 from .formatters import format_value
 
@@ -93,3 +94,24 @@ def convert_dt_data_to_df(dt_data, index_col=None):
     if index_col:
         df = df.set_index(index_col)
     return df
+
+
+def convert_csv_text_to_csv_response(csvtext):
+    return Response(csvtext, mimetype="text/csv")
+
+
+def convert_df_to_csv_response(df):
+    return convert_csv_text_to_csv_response(
+        df.to_csv(encoding='utf-8'))
+
+
+def convert_dt_to_csv_response(dt, index_col=None):
+    return convert_df_to_csv_response(
+        df=convert_dt_to_df(dt, index_col=index_col),
+    )
+
+
+def convert_dt_data_to_csv_response(dt_data, index_col=None):
+    return convert_df_to_csv_response(
+        df=convert_dt_data_to_df(dt_data, index_col=index_col)
+    )

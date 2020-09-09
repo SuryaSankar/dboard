@@ -5,6 +5,7 @@ from .template_filters import register_template_filters
 from .data_sources import (
     prepare_data_sources, construct_sqla_db_uri,
     sqla_db_info, sqla_query_builder, sqla_base)
+from .query_response_controller import QueryResponseController
 
 
 def create_blueprint(

@@ -1,10 +1,8 @@
 import math
 
-import urllib.parse
-
 import json
 
-from flask import request, Response, abort
+from flask import request, Response
 
 from flask_sqlalchemy_booster.responses import as_json
 
@@ -15,27 +13,6 @@ from toolspy import merge, null_safe_type_cast, subdict, write_csv_file
 from .utils import (
     convert_sqla_collection_items_to_dicts,
     get_queried_field_labels, sqla_sort)
-
-from .utils.dash_utils import (
-    convert_dt_data_to_df,
-    convert_dt_to_df)
-import traceback
-
-
-def convert_df_to_csv_response(df):
-    return convert_csv_text_to_csv_response(
-        df.to_csv(encoding='utf-8'))
-
-
-def convert_dt_to_csv_response(dt, index_col=None):
-    return convert_df_to_csv_response(
-        df=convert_dt_to_df(dt, index_col=index_col),
-    )
-
-def convert_dt_data_to_csv_response(dt_data, index_col=None):
-    return convert_df_to_csv_response(
-        df=convert_dt_data_to_df(dt_data, index_col=index_col)
-    )
 
 
 QUERY_MODIFIERS = [
@@ -161,6 +138,7 @@ def fetch_filter_params(
             filter_params)
     return filter_params
 
+
 def construct_response_from_query(
         q, json_query_modifiers=None, csv_query_modifiers=None,
         response_format=None):
@@ -199,6 +177,7 @@ def render_query_response(
     finally:
         session.close()
     return response
+
 
 def convert_error_to_json_response(e):
     response = e.get_response()

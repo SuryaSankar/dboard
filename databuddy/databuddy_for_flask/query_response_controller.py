@@ -11,11 +11,11 @@ class QueryResponseController(object):
 
     def __init__(
             self, datasource_name=None, response_format=None,
-            json_query_modifiers=None, csv_query_modifiers=None):
+            params=None):
         self.datasource_name = datasource_name or self.get_datasource_name()
         self.response_format = response_format or self.get_response_format()
-        self.json_query_modifiers = json_query_modifiers or self.get_json_query_modifiers()
-        self.csv_query_modifiers = csv_query_modifiers or self.get_csv_query_modifiers()
+        self.params = params or fetch_filter_params(
+            filter_params_schema=self.ParamSchema)
         self.query_engine = sqla_query_builder(self.datasource_name)
         self.db_base = sqla_base(self.datasource_name)
 
@@ -23,24 +23,14 @@ class QueryResponseController(object):
         raise NotImplementedError
 
     def get_response_format(self):
-        return 'json'
-
-    def get_json_query_modifiers(self):
-        return None
-
-    def get_csv_query_modifiers(self):
-        return None
+        return request.args.get('format') or 'json'
 
     def query(self, params=None):
         raise NotImplementedError
 
+    def construct_response(self, q):
+        return construct_response_from_query(
+            q, response_format=self.response_format)
+
     def render_response(self):
-        params = fetch_filter_params(
-            filter_params_schema=self.ParamSchema)
-        response_format = request.args.get('format') or self.response_format
-        q = self.query(params=params)
-        response = construct_response_from_query(
-            q, json_query_modifiers=self.json_query_modifiers,
-            csv_query_modifiers=self.csv_query_modifiers,
-            response_format=response_format)
-        return response
+        return self.construct_response(self.query())

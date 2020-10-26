@@ -14,7 +14,7 @@
           Reports
         </a>
         <div class="dropdown-menu scrollable-menu" aria-labelledby="navbarDropdown">
-            {% include "databuddy/default_theme/layout_sections/treemenu.html" %}
+            {{ theme_layout_components.tree_menu(nav_menu_items)}}
         </div>
       </li>
     </ul>

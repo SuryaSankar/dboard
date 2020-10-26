@@ -1,0 +1,23 @@
+{% macro tree_menu_item(item) %}
+    {% if item.type == "submenu" %}
+      <li>
+        <div class="listree-submenu-heading">{{item.text}}</div>
+        <ul class="listree-submenu-items">
+          {% for submenu_item in item.children %}
+            {{tree_menu_item(submenu_item)}}
+          {% endfor %}
+        </ul>
+      </li>
+    {% else %}
+      <li><a href="{{url_for(item.url_for)}}">{{item.text}}</a></li>
+    {% endif %}
+{% endmacro %}
+  
+
+{% macro tree_menu(items) %}
+  <ul class="listree">
+    {% for item in items %}
+      {{tree_menu_item(item)}}
+    {% endfor %}
+  </ul>
+{% endmacro %}

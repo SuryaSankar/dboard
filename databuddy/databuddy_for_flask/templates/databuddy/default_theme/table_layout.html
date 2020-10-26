@@ -1,4 +1,4 @@
-{% extends "databuddy/layout.html" %}
+{% extends "databuddy/default_theme/layout.html" %}
 
 {% if table_id is not defined %}
     {% if heading is defined %}
@@ -51,27 +51,26 @@
     <div id="table-and-charts-failure" style="display:none;">
         <p>Failed to load the data. Please reload</p>
     </div>
-
-
-    
+   
 {% endblock %}
 
 {% block page_js_in_footer %}
 
-<script type="module">
-    import {registerPageReloadingFormHandler} from '/static/node_modules/databuddy-client/dist/databuddy-client.esm.js';
-    registerPageReloadingFormHandler("{{table_filters_form_id}}");
-</script>
-
-{% block layout_setup_js %}
-    <script type="module">
-        import { setupStandardLayout } from '/static/node_modules/databuddy-client/dist/databuddy-client.esm.js';
-
-        setupStandardLayout("{{api_url | safe}}", "{{table_id}}")
-            .then(response => {
-
-            });
+    <script>
+        $(function(){
+            databuddy.registerPageReloadingFormHandler("{{table_filters_form_id}}");
+        }); 
     </script>
-{% endblock %}
+
+    {% block layout_setup_js %}
+        <script>
+            $(function(){
+                databuddy.setupStandardLayout("{{api_url | safe}}", "{{table_id}}")
+                    .then(response => {
+
+                    });
+            });
+        </script>
+    {% endblock %}
 
 {% endblock %}

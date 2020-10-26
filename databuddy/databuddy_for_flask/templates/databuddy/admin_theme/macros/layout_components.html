@@ -1,0 +1,59 @@
+
+{% macro nav_link(text, href, li_icon="fa-circle") %}
+    <a href="{{href}}" class="nav-link {{'active' if request.path==href else ''}}">
+        <i class="nav-icon fas {{li_icon}}"></i>
+        <p>
+          {{text}}
+          <i class="right fas fa-angle-left"></i>
+        </p>
+    </a>
+{% endmacro %}
+
+{% macro li(class="nav-item") %}
+<li class="{{class}}">
+  {{ caller() }}
+</li>
+{% endmacro %}
+
+{% macro li_with_nav_link(text, href, li_icon="fa-circle") %}
+  {% call li() %}
+    {{nav_link(text, href, li_icon)}}
+  {% endcall %}
+{% endmacro %}
+
+{% macro nav_ul(items, ul_class="nav nav-treeview") %}
+<ul class="{{ul_class}}">
+  {% for item in items %}
+    {% call li() %}
+      {{nav_link(item.text, item.href, item.li_icon)}}
+    {% endcall %}
+  {% endfor %}
+</ul>
+{% endmacro%}
+
+{% macro nav_menu_item(item) %}
+    {% if item.type == "section_header" %}
+      <li class="nav-header">{{item.text}}</li>
+    {% elif item.type == "submenu" %}
+      <li class="nav-item has-treeview">
+        {{ nav_link(item.text, "#", li_icon="fa-tachometer-alt")}}
+        <ul class="nav nav-treeview">
+          {% for submenu_item in item.children %}
+            {{nav_menu_item(submenu_item)}}
+          {% endfor %}
+        </ul>
+      </li>
+    {% else %}
+      {{ li_with_nav_link(item.text, url_for(item.url_for))}}
+    {% endif %}
+{% endmacro %}
+  
+{% macro nav_menu(items) %}
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        {% for item in items %}
+          {{nav_menu_item(item)}}
+        {% endfor %}
+      </ul>
+    </nav>
+{% endmacro %}

@@ -1,0 +1,77 @@
+{% extends "databuddy/admin_theme/layout.html" %}
+
+{% if table_id is not defined %}
+    {% if heading is defined %}
+        {% set table_id = heading | replace(" ", "-") | lower %}
+    {% else %}
+        {% set table_id = "primary-table" %}
+    {% endif %}
+{% endif %}
+
+{% if table_filters_form_id is not defined %}
+    {% set table_filters_form_id = "filters" %}
+{% endif %}
+
+{% block page_content %}
+    {% if filters is defined %}
+        <div class="row pb-2">
+            {{layout_components.render_form(filters, table_filters_form_id)}}
+        </div>
+    {% endif %}
+    <div class="row pb-2 justify-content-end">
+        <div class="col-1">
+            <a 
+                id="{{table_id}}-full-csv"
+                href="{{api_url | set_query_params({'format' :'csv'}) | safe}}"
+                download="{{table_id}}_{{requested_db}}_{{curr_dt | format_datetime('%Y_%m_%d_%H_%M_%S')}}.csv"
+                target="_blank"
+                class="btn btn-sm btn-secondary"
+                >
+                    Download CSV
+            </a>
+        </div>
+    </div>
+    <div id="table-and-charts-loader" class="spinner-grow" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <div id="table-and-charts" style="display:none;">
+        {% block charts %}
+        {% endblock %}
+        {% block table %}
+            <h3>Table</h3>
+            <div class="row">
+                <div id="{{table_id}}_meta">
+                </div>
+            </div>
+            <div class="row">
+                <div id="{{table_id}}"></div>
+            </div>
+        {% endblock %}
+    </div>
+    <div id="table-and-charts-failure" style="display:none;">
+        <p>Failed to load the data. Please reload</p>
+    </div>
+
+
+    
+{% endblock %}
+
+{% block page_js_in_footer %}
+
+<script type="module">
+    import {registerPageReloadingFormHandler} from '/static/node_modules/databuddy-client/dist/databuddy-client.esm.js';
+    registerPageReloadingFormHandler("{{table_filters_form_id}}");
+</script>
+
+{% block layout_setup_js %}
+    <script type="module">
+        import { setupStandardLayout } from '/static/node_modules/databuddy-client/dist/databuddy-client.esm.js';
+
+        setupStandardLayout("{{api_url | safe}}", "{{table_id}}")
+            .then(response => {
+
+            });
+    </script>
+{% endblock %}
+
+{% endblock %}

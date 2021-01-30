@@ -80,12 +80,19 @@
       method="{{method}}"
       {% endif %}
     >
+      <div class="row row-cols-6">
         {% for field in fields %}
+        <div class="col d-flex flex-column">
           {{render_field(field)}}
+        </div>
         {% endfor %}
-        <button id="{{form_id}}-submit" class="btn btn-sm btn-info">
-        Submit
-        </button>
+        <div class="col align-self-end">
+          <button id="{{form_id}}-submit" class="btn btn-sm btn-info">
+          Apply Filters
+          </button>
+        </div>
+      </div>
+
     </form>
 {% endmacro %}
 

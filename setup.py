@@ -21,8 +21,7 @@ requirements = [
     "bleach",
     "pandas",
     "numpy",
-    "flask_sqlalchemy_booster",
-    "mysqlclient"
+    "marshmallow"
 ]
 
 setup_requirements = ['pytest-runner', ]

@@ -23,11 +23,13 @@ class SqlaQueryBuilder(object):
         self.timedelta_mins_from_utc = timedelta_mins_from_utc
         self.sessionmaker = sessionmaker(bind=self.engine)
         self.app = flask_app
+        self.session = scoped_session(self.sessionmaker)
 
-        if flask_app:
-            self.session = flask_scoped_session(self.sessionmaker, flask_app)
-        else:
-            self.session = scoped_session(self.sessionmaker)
+        # if flask_app:
+        #     self.session = flask_scoped_session(self.sessionmaker, flask_app)
+        # else:
+        #     self.session = scoped_session(self.sessionmaker)
+
 
     @contextmanager
     def scoped_session(self, commit=False):

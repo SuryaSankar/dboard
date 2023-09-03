@@ -3,8 +3,7 @@ import math
 import json
 
 from flask import request, Response
-
-from flask_sqlalchemy_booster.responses import as_json
+from flask.json import _json
 
 from io import StringIO
 
@@ -24,6 +23,30 @@ def fetch_query_modifiers_from_request():
         request.args,
         QUERY_MODIFIERS
     )
+
+
+def structured(struct, meta=None, struct_key=None):
+    if struct_key is None:
+        struct_key = "result"
+    output = {'status': 'success', struct_key: struct}
+    if meta:
+        output = merge(output, meta)
+    return output
+
+
+def jsoned(struct, meta=None, struct_key=None):
+
+    return _json.dumps(
+        structured(
+            struct, meta=meta, struct_key=struct_key))
+
+def as_json(
+        struct, status=200, meta=None, struct_key=None):
+    return Response(
+        jsoned(
+            struct, meta=meta,
+            struct_key=struct_key),
+        status, mimetype='application/json')
 
 
 def construct_query_modifiers(
@@ -152,6 +175,17 @@ def construct_response_from_query(
             q, query_modifiers=json_query_modifiers)
     return construct_json_response_from_query(
         q, query_modifiers=json_query_modifiers)
+
+def construct_json_response_from_df(df):
+    records = json.loads(df.to_json(orient='records', date_format='iso'))
+    return as_json(
+        records,
+        struct_key="data"
+    )
+
+
+def construct_response_from_df(df):
+    return construct_json_response_from_df(df)
 
 
 def render_query_response(

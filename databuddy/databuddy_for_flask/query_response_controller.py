@@ -1,5 +1,5 @@
 from flask import request
-from .data_sources import sqla_base, sqla_query_builder
+from .data_sources import sqla_base, sqla_query_builder, get_db_store
 from ..response_generators import (
     fetch_filter_params, construct_response_from_query)
 
@@ -18,6 +18,7 @@ class QueryResponseController(object):
             filter_params_schema=self.ParamSchema)
         self.query_engine = sqla_query_builder(self.datasource_name)
         self.db_base = sqla_base(self.datasource_name)
+        self.db_store = get_db_store(self.datasource_name)
 
     def get_datasource_name(self):
         raise NotImplementedError
@@ -34,3 +35,5 @@ class QueryResponseController(object):
 
     def render_response(self):
         return self.construct_response(self.query())
+
+

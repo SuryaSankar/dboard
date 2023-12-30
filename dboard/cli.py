@@ -1,13 +1,13 @@
-"""Console script for databuddy."""
+"""Console script for dboard."""
 import sys
 import click
 
 
 @click.command()
 def main(args=None):
-    """Console script for databuddy."""
+    """Console script for dboard."""
     click.echo("Replace this message by putting your code into "
-               "databuddy.cli.main")
+               "dboard.cli.main")
     click.echo("See click documentation at https://click.palletsprojects.com/")
     return 0
 

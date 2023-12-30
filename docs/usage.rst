@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use databuddy in a project::
+To use dboard in a project::
 
-    import databuddy
+    import dboard

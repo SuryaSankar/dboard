@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=databuddy
+set SPHINXPROJ=dboard
 
 if "%1" == "" goto help
 

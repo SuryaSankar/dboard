@@ -11,8 +11,8 @@ from .df_response_controller import DfResponseController
 
 def create_blueprint(
         app,
-        blueprint_name="databuddy",
-        blueprint_url_prefix="/databuddy"):
+        blueprint_name="dboard",
+        blueprint_url_prefix="/dboard"):
     bp = Blueprint(
         blueprint_name, __name__,
         url_prefix=blueprint_url_prefix,
@@ -25,7 +25,7 @@ def render_table_layout(
         table_heading,
         table_filters,
         table_filters_form_id="filters",
-        template_path="databuddy/table_layout.html",
+        template_path="dboard/table_layout.html",
         **kwargs):
     filter_params = request.args.get(table_filters_form_id)
     if filter_params:
@@ -43,14 +43,14 @@ def render_table_layout(
     )
 
 
-class DatabuddyForFlask(object):
+class DboardFlask(object):
     """
     Doc string.
     """
 
     def __init__(
-            self, app, blueprint_name="databuddy",
-            blueprint_url_prefix="/databuddy",
+            self, app, blueprint_name="dboard",
+            blueprint_url_prefix="/dboard",
             nav_menu_items=None, engine_kwargs=None):
         self.pages_bp = None
         if app is not None:
@@ -61,8 +61,8 @@ class DatabuddyForFlask(object):
                 engine_kwargs=engine_kwargs)
 
     def init_app(
-            self, app, blueprint_name="databuddy",
-            blueprint_url_prefix="/databuddy",
+            self, app, blueprint_name="dboard",
+            blueprint_url_prefix="/dboard",
             nav_menu_items=None, engine_kwargs=None):
         '''Initalizes the application with the extension.
         :param app: The Flask application object.

@@ -1,4 +1,4 @@
-Welcome to databuddy's documentation!
+Welcome to dboard's documentation!
 ======================================
 
 .. toctree::

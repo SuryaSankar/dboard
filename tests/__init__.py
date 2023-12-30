@@ -1,1 +1,1 @@
-"""Unit test package for databuddy."""
+"""Unit test package for dboard."""

@@ -1,16 +1,16 @@
 =========
-databuddy
+dboard
 =========
 
 
-.. image:: https://img.shields.io/pypi/v/databuddy.svg
-        :target: https://pypi.python.org/pypi/databuddy
+.. image:: https://img.shields.io/pypi/v/dboard.svg
+        :target: https://pypi.python.org/pypi/dboard
 
-.. image:: https://img.shields.io/travis/suryasankar/databuddy.svg
-        :target: https://travis-ci.com/suryasankar/databuddy
+.. image:: https://img.shields.io/travis/suryasankar/dboard.svg
+        :target: https://travis-ci.com/suryasankar/dboard
 
-.. image:: https://readthedocs.org/projects/databuddy/badge/?version=latest
-        :target: https://databuddy.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/dboard/badge/?version=latest
+        :target: https://dboard.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
@@ -20,7 +20,7 @@ Tools to help create a data dashboard
 
 
 * Free software: MIT license
-* Documentation: https://databuddy.readthedocs.io.
+* Documentation: https://dboard.readthedocs.io.
 
 
 Features

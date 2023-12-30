@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install databuddy, run this command in your terminal:
+To install dboard, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install databuddy
+    $ pip install dboard
 
-This is the preferred method to install databuddy, as it will always install the most recent stable release.
+This is the preferred method to install dboard, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,19 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for databuddy can be downloaded from the `Github repo`_.
+The sources for dboard can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/suryasankar/databuddy
+    $ git clone git://github.com/suryasankar/dboard
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/suryasankar/databuddy/tarball/master
+    $ curl -OJL https://github.com/suryasankar/dboard/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/suryasankar/databuddy
-.. _tarball: https://github.com/suryasankar/databuddy/tarball/master
+.. _Github repo: https://github.com/suryasankar/dboard
+.. _tarball: https://github.com/suryasankar/dboard/tarball/master

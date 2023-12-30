@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-"""Tests for `databuddy` package."""
+"""Tests for `dboard` package."""
 
 import pytest
 
 from click.testing import CliRunner
 
-from databuddy import databuddy
-from databuddy import cli
+from dboard import dboard
+from dboard import cli
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def test_command_line_interface():
     runner = CliRunner()
     result = runner.invoke(cli.main)
     assert result.exit_code == 0
-    assert 'databuddy.cli.main' in result.output
+    assert 'dboard.cli.main' in result.output
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output
